@@ -1,0 +1,17 @@
+---
+---
+
+@import "minima";
+
+.post-source {
+  display: block;
+  font-size: $small-font-size;
+  color: $grey-color;
+  margin-top: -8px;
+  margin-bottom: 12px;
+
+  a {
+    color: $grey-color-dark;
+    font-weight: 600;
+  }
+}
