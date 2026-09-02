@@ -13,6 +13,7 @@ header_pages:
 exclude:
   - scraper/
   - README.md
+  - CLAUDE.md
   - Gemfile
   - Gemfile.lock
   - vendor/
