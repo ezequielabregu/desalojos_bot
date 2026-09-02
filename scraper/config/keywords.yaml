@@ -1,0 +1,17 @@
+# Palabras/frases clave usadas para filtrar artículos relacionados a desalojos.
+# La comparación se hace en minúsculas y sin distinguir mayúsculas/acentos
+# exactos (ver normalize() en fetch_sources.py).
+
+keywords:
+  - desalojo
+  - desalojos
+  - desalojar
+  - desalojado
+  - desalojados
+  - desalojada
+  - desalojadas
+  - orden de desalojo
+  - juicio de desalojo
+  - toma de tierras
+  - usurpacion
+  - lanzamiento judicial

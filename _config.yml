@@ -1,0 +1,19 @@
+title: Desalojos en Argentina
+description: >-
+  Recopilación diaria de noticias sobre desalojos en Argentina, publicadas por
+  medios reconocidos y verificados. Cada post enlaza a la nota original.
+theme: minima
+lang: es
+
+show_excerpts: true
+
+header_pages:
+  - about.md
+
+# El scraper y sus datos internos no deben terminar en el sitio publicado
+exclude:
+  - scraper/
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor/

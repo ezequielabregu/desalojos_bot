@@ -1,0 +1,43 @@
+# Lista de fuentes confiables.
+#
+# Cada fuente debe tener:
+#   name:     nombre para mostrar / atribución
+#   homepage: sitio principal (usado también para validar el dominio del link)
+#   rss_url:  URL del feed RSS/Atom (preferido)
+#
+# Si un medio no tiene RSS, se puede omitir rss_url y en su lugar definir un
+# fallback de scraping HTML con:
+#   html_url:        URL de la sección/tag a scrapear (ej. listado de notas)
+#   article_selector: selector CSS de cada link de artículo en esa página
+#
+# IMPORTANTE: las URLs de RSS cambian con el tiempo y deben verificarse antes
+# de correr el scraper por primera vez (ver README para cómo probar cada una).
+
+sources:
+  - name: Clarín
+    homepage: https://www.clarin.com
+    rss_url: https://www.clarin.com/rss/lo-ultimo/
+
+  - name: La Nación
+    homepage: https://www.lanacion.com.ar
+    rss_url: https://www.lanacion.com.ar/arc/outboundfeeds/rss/
+
+  - name: Infobae
+    homepage: https://www.infobae.com
+    rss_url: https://www.infobae.com/arc/outboundfeeds/rss/
+
+  - name: Página/12
+    homepage: https://www.pagina12.com.ar
+    rss_url: https://www.pagina12.com.ar/rss/portada
+
+  - name: Perfil
+    homepage: https://www.perfil.com
+    rss_url: https://www.perfil.com/feed
+
+  - name: Ámbito Financiero
+    homepage: https://www.ambito.com
+    rss_url: https://www.ambito.com/rss/pages/home.xml
+
+  - name: TN
+    homepage: https://tn.com.ar
+    rss_url: https://tn.com.ar/feed/
