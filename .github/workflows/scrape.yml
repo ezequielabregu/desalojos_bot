@@ -2,12 +2,19 @@ name: Scrape noticias de desalojos
 
 on:
   schedule:
-    # 12:00 UTC ~ 09:00 en Argentina (UTC-3). Ajustar si cambia el horario.
-    - cron: "0 12 * * *"
+    # Corre una vez por hora, en el minuto 0. GitHub no garantiza el minuto
+    # exacto en horarios de alta demanda, pero en la práctica corre cerca.
+    - cron: "0 * * * *"
   workflow_dispatch: {}
 
 permissions:
   contents: write
+
+# Evita que dos corridas (ej. una programada y una manual) pusheen a la vez
+# y choquen; en vez de cancelarse, la segunda espera a que termine la primera.
+concurrency:
+  group: scrape-noticias-desalojos
+  cancel-in-progress: false
 
 jobs:
   scrape:
