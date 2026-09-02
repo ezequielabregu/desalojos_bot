@@ -89,6 +89,16 @@ sources:
     # de la edición Argentina (hay también una edición España aparte).
     rss_url: https://www.lapoliticaonline.com/files/rss/ultimasnoticias.xml
 
+  - name: El Cronista
+    homepage: https://www.cronista.com
+    # CMS Arc (como La Nación/Infobae). No tiene sección de inmuebles/sociedad
+    # propia entre sus categorías; se usa la portada general.
+    rss_url: https://www.cronista.com/arc/outboundfeeds/rss/
+
+  - name: PCR
+    homepage: https://pcr.org.ar
+    rss_url: https://pcr.org.ar/feed/
+
 # Fuentes evaluadas y descartadas por ahora (ver README):
 #   - Reporte Inmobiliario: su infraestructura bloquea/cuelga cualquier
 #     acceso automatizado (RSS, sitemap y hasta robots.txt fallan).
