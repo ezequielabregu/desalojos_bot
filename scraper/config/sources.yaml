@@ -76,3 +76,21 @@ sources:
     homepage: https://www.minutouno.com
     # No tiene RSS propio; se usa su sitemap de noticias de Google (últimas ~48hs).
     news_sitemap_url: https://www.minutouno.com/sitemap-news.xml
+
+  - name: iProfesional
+    homepage: https://www.iprofesional.com
+    # No tiene RSS; usa sitemap de noticias de Google. Tienen uno específico
+    # de la sección real estate, más targeteado que el general del sitio.
+    news_sitemap_url: https://www.iprofesional.com/sitemap-news.realestate.xml
+
+  - name: La Política Online
+    homepage: https://www.lapoliticaonline.com
+    # No tiene sección propia de sociedad/policiales; se usa la portada
+    # de la edición Argentina (hay también una edición España aparte).
+    rss_url: https://www.lapoliticaonline.com/files/rss/ultimasnoticias.xml
+
+# Fuentes evaluadas y descartadas por ahora (ver README):
+#   - Reporte Inmobiliario: su infraestructura bloquea/cuelga cualquier
+#     acceso automatizado (RSS, sitemap y hasta robots.txt fallan).
+#   - Tiempo Argentino: su RSS está publicando spam (posible sitio
+#     comprometido) a la fecha en que se evaluó. Re-evaluar más adelante.
