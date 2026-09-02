@@ -15,3 +15,14 @@ keywords:
   - toma de tierras
   - usurpacion
   - lanzamiento judicial
+
+# Si un artículo matchea alguna keyword de arriba PERO también contiene
+# alguna de estas frases, se descarta igual. Existen porque "desalojo" en
+# español también se usa para evacuaciones (amenazas de bomba, alarmas,
+# etc.), que no tienen nada que ver con un desalojo habitacional/judicial.
+exclude_keywords:
+  - protocolo antibomba
+  - amenaza de bomba
+  - bulto sospechoso
+  - falsa alarma
+  - paquete sospechoso

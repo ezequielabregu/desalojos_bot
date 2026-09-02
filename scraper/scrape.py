@@ -51,14 +51,17 @@ def save_seen(seen_ids: set[str]) -> None:
     )
 
 
-def matches_keywords(article: Article, keywords: list[str]) -> bool:
+def matches_keywords(article: Article, keywords: list[str], exclude_keywords: list[str]) -> bool:
     haystack = normalize(f"{article.title} {article.summary}")
+    if any(normalize(keyword) in haystack for keyword in exclude_keywords):
+        return False
     return any(normalize(keyword) in haystack for keyword in keywords)
 
 
 def main() -> None:
     sources = load_yaml_list(CONFIG_DIR / "sources.yaml", "sources")
     keywords = load_yaml_list(CONFIG_DIR / "keywords.yaml", "keywords")
+    exclude_keywords = load_yaml_list(CONFIG_DIR / "keywords.yaml", "exclude_keywords")
 
     if not sources:
         print("[ERROR] No hay fuentes configuradas en sources.yaml")
@@ -74,7 +77,7 @@ def main() -> None:
     for article in articles:
         if article.guid in seen_ids:
             continue
-        if not matches_keywords(article, keywords):
+        if not matches_keywords(article, keywords, exclude_keywords):
             continue
 
         write_post(article, POSTS_DIR)
