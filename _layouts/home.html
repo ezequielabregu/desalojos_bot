@@ -36,3 +36,9 @@ layout: default
     </ul>
   {%- endif -%}
 </div>
+
+<script>
+  // Si esta pestaña queda abierta, se recarga sola cada 15 min para traer
+  // noticias nuevas sin que haya que refrescar a mano.
+  setTimeout(function () { location.reload(); }, 15 * 60 * 1000);
+</script>
