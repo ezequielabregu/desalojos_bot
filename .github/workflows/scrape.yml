@@ -2,9 +2,12 @@ name: Scrape noticias de desalojos
 
 on:
   schedule:
-    # Corre una vez por hora, en el minuto 0. GitHub no garantiza el minuto
-    # exacto en horarios de alta demanda, pero en la práctica corre cerca.
-    - cron: "0 * * * *"
+    # Corre una vez por hora, en el minuto 17 (no en punto). GitHub retrasa o
+    # directamente saltea corridas programadas para el minuto 0 de cada hora
+    # por ser el momento de mayor congestión en todos sus runners; correr en
+    # un minuto "raro" reduce bastante ese riesgo. Aun así, GitHub no
+    # garantiza el minuto exacto de ejecución.
+    - cron: "17 * * * *"
   workflow_dispatch: {}
 
 permissions:
