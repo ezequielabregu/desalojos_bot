@@ -79,15 +79,31 @@ with spam) — check there before re-proposing a source that already failed vett
 
 ### GitHub Actions workflow (`.github/workflows/scrape.yml`)
 
-Runs hourly (`17 * * * *` — deliberately not `:00`, since GitHub Actions cron jobs scheduled on the
-hour are the most likely to be delayed/dropped under load) plus `workflow_dispatch` for manual runs.
-Has a `concurrency` group with `cancel-in-progress: false` so overlapping runs queue instead of
+Nominally runs hourly (`17 * * * *` — deliberately not `:00`, since GitHub Actions cron jobs
+scheduled on the hour are more likely to be delayed under load) plus `workflow_dispatch` for manual
+runs. Has a `concurrency` group with `cancel-in-progress: false` so overlapping runs queue instead of
 racing on the `git push`. It commits `_posts/`, `scraper/data/seen.json`, and `_data/status.yml`
 **every run**, not just when new posts are found — the commit message itself is derived from
 `_data/status.yml`'s `new_articles` count. Because the bot commits directly to `main` on its own
 schedule, expect `git push` to sometimes be rejected with "fetch first" during manual work; resolve
 with `git pull --rebase origin main` (the bot's changes and local edits touch disjoint files in
 practice, so this has rebased cleanly every time so far).
+
+**GitHub's own `schedule` trigger turned out to be unreliable in practice** — checked empirically via
+the Actions API, it fired only once in ~10 expected hourly windows over a day of observation (not
+just delayed, mostly skipped outright). Because of that, the real trigger for regular runs is now
+**external**: a free cron-job.org job calls `POST /repos/ezequielabregu/desalojos_bot/actions/workflows/scrape.yml/dispatches`
+every hour with a fine-grained GitHub PAT (scoped to this repo only, `Actions: read/write` +
+`Contents: read`) stored in cron-job.org's own header config — not anywhere in this repo or as a
+GitHub Actions secret. The in-repo `schedule:` trigger is kept only as a zero-cost fallback in case it
+occasionally fires; don't remove it, but don't rely on it either. If "last checked" on the homepage
+stops advancing, the cron-job.org job (not GitHub Actions) is the first thing to check — GitHub's own
+Actions run history only shows what GitHub knows about, which won't explain an external-trigger
+outage. Debugging that integration once surfaced a red herring worth remembering: GitHub's dispatch
+endpoint returns a generic-looking `400`/`404` for several unrelated causes (bad token, wrong repo
+scope on the token, or a header value accidentally containing `"HeaderName: value"` instead of just
+`value`) — the real cause is always in the JSON `message`/`errors` field of the response body, not the
+status code alone.
 
 ### Jekyll site
 
