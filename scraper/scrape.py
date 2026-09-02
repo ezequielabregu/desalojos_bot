@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import sys
 import unicodedata
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import yaml
@@ -23,6 +24,8 @@ BASE_DIR = Path(__file__).parent
 CONFIG_DIR = BASE_DIR / "config"
 SEEN_PATH = BASE_DIR / "data" / "seen.json"
 POSTS_DIR = BASE_DIR.parent / "_posts"
+STATUS_PATH = BASE_DIR.parent / "_data" / "status.yml"
+ARGENTINA_UTC_OFFSET = timedelta(hours=-3)
 
 
 def normalize(text: str) -> str:
@@ -49,6 +52,28 @@ def save_seen(seen_ids: set[str]) -> None:
         json.dumps({"seen_ids": sorted(seen_ids)}, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+
+
+def save_status(sources_count: int, articles_count: int, new_count: int) -> None:
+    """Registra que el bot corrió, incluso si no encontró noticias nuevas.
+
+    Esto es lo que permite monitorear en el sitio si el cron de GitHub
+    Actions se sigue ejecutando (ver /about/): una fecha de "última
+    verificación" muy vieja indica que el cron dejó de dispararse, algo
+    que no se notaría mirando solo la fecha del último post publicado.
+    """
+    now_utc = datetime.now(timezone.utc)
+    now_ar = now_utc + ARGENTINA_UTC_OFFSET
+
+    STATUS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    content = (
+        f'last_checked_utc: "{now_utc.strftime("%Y-%m-%d %H:%M UTC")}"\n'
+        f'last_checked_ar: "{now_ar.strftime("%d/%m/%Y %H:%M")} hs (Argentina)"\n'
+        f"sources_checked: {sources_count}\n"
+        f"articles_reviewed: {articles_count}\n"
+        f"new_articles: {new_count}\n"
+    )
+    STATUS_PATH.write_text(content, encoding="utf-8")
 
 
 def matches_keywords(article: Article, keywords: list[str], exclude_keywords: list[str]) -> bool:
@@ -85,6 +110,7 @@ def main() -> None:
         new_count += 1
 
     save_seen(seen_ids)
+    save_status(len(sources), len(articles), new_count)
     print(f"Listo. {new_count} noticia(s) nueva(s) publicada(s) de {len(articles)} revisadas.")
 
 
