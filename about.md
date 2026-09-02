@@ -6,7 +6,7 @@ permalink: /about/
 
 ## Qué es este sitio
 
-Un bot recorre automáticamente, una vez al día, los feeds RSS (y en algunos
+Un bot recorre automáticamente, cada una hora, los feeds RSS (y en algunos
 casos el HTML) de un conjunto **fijo y curado de medios argentinos
 reconocidos**. De cada fuente extrae únicamente título, fecha, un resumen
 breve y el enlace a la nota original — nunca el artículo completo, para

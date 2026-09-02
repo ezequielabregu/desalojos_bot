@@ -1,20 +1,28 @@
 """Obtiene artículos crudos de las fuentes confiables configuradas.
 
-Para cada fuente se intenta primero RSS (feedparser). Si la fuente no tiene
-`rss_url` pero sí `html_url` + `article_selector`, se usa scraping HTML como
-respaldo. Nunca se extrae el cuerpo completo del artículo, solo metadata y un
-resumen corto.
+Para cada fuente se intenta, en orden: RSS (feedparser); si no tiene
+`rss_url` pero sí `news_sitemap_url`, se usa el sitemap de noticias de
+Google (formato que muchos medios exponen aunque no tengan RSS); si tampoco
+tiene eso pero sí `html_url` + `article_selector`, se usa scraping HTML como
+último recurso. Nunca se extrae el cuerpo completo del artículo, solo
+metadata y un resumen corto.
 """
 
 from __future__ import annotations
 
 import time
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
 import feedparser
 import requests
 from bs4 import BeautifulSoup
+
+_SITEMAP_NS = {
+    "sm": "http://www.sitemaps.org/schemas/sitemap/0.9",
+    "news": "http://www.google.com/schemas/sitemap-news/0.9",
+}
 
 USER_AGENT = (
     "desalojos-bot/1.0 (+https://github.com/; "
@@ -39,10 +47,15 @@ def fetch_all(sources: list[dict]) -> list[Article]:
         try:
             if source.get("rss_url"):
                 articles.extend(_fetch_rss(source))
+            elif source.get("news_sitemap_url"):
+                articles.extend(_fetch_news_sitemap(source))
             elif source.get("html_url") and source.get("article_selector"):
                 articles.extend(_fetch_html(source))
             else:
-                print(f"[WARN] Fuente '{source.get('name')}' sin rss_url ni html_url, se omite.")
+                print(
+                    f"[WARN] Fuente '{source.get('name')}' sin rss_url, "
+                    "news_sitemap_url ni html_url, se omite."
+                )
         except Exception as exc:
             # Una fuente caída o que cambió de estructura no debe frenar al resto.
             print(f"[WARN] Fallo al obtener '{source.get('name')}': {exc}")
@@ -70,6 +83,43 @@ def _fetch_rss(source: dict) -> list[Article]:
             )
         )
     return articles
+
+
+def _fetch_news_sitemap(source: dict) -> list[Article]:
+    headers = {"User-Agent": USER_AGENT}
+    resp = requests.get(source["news_sitemap_url"], headers=headers, timeout=REQUEST_TIMEOUT)
+    resp.raise_for_status()
+    root = ET.fromstring(resp.content)
+
+    articles = []
+    for url_tag in root.findall("sm:url", _SITEMAP_NS):
+        link = url_tag.findtext("sm:loc", default=None, namespaces=_SITEMAP_NS)
+        title = url_tag.findtext("news:news/news:title", default=None, namespaces=_SITEMAP_NS)
+        date_text = url_tag.findtext(
+            "news:news/news:publication_date", default=None, namespaces=_SITEMAP_NS
+        )
+        if not link or not title:
+            continue
+        articles.append(
+            Article(
+                source=source["name"],
+                title=title,
+                link=link,
+                summary="",
+                published=_parse_iso_date(date_text),
+                guid=link,
+            )
+        )
+    return articles
+
+
+def _parse_iso_date(value: str | None) -> datetime:
+    if not value:
+        return datetime.now(timezone.utc)
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return datetime.now(timezone.utc)
 
 
 def _fetch_html(source: dict) -> list[Article]:

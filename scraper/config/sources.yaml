@@ -5,8 +5,13 @@
 #   homepage: sitio principal (usado también para validar el dominio del link)
 #   rss_url:  URL del feed RSS/Atom (preferido)
 #
-# Si un medio no tiene RSS, se puede omitir rss_url y en su lugar definir un
-# fallback de scraping HTML con:
+# Si un medio no tiene RSS pero sí expone un sitemap de noticias de Google
+# (formato estándar que muchos medios generan aunque no tengan RSS propio,
+# ver robots.txt del sitio para encontrarlo), se puede usar en su lugar:
+#   news_sitemap_url: URL del sitemap-news.xml
+#
+# Si un medio no tiene ninguna de las dos opciones anteriores, se puede
+# definir un fallback de scraping HTML con:
 #   html_url:        URL de la sección/tag a scrapear (ej. listado de notas)
 #   article_selector: selector CSS de cada link de artículo en esa página
 #
@@ -62,3 +67,12 @@ sources:
     # TN no expone feeds por sección (solo el de portada funciona), se mantiene
     # el de portada general como única opción disponible para este medio.
     rss_url: https://tn.com.ar/feed/
+
+  - name: La Izquierda Diario
+    homepage: https://www.laizquierdadiario.com
+    rss_url: https://www.laizquierdadiario.com/spip.php?page=backend
+
+  - name: Minuto Uno
+    homepage: https://www.minutouno.com
+    # No tiene RSS propio; se usa su sitemap de noticias de Google (últimas ~48hs).
+    news_sitemap_url: https://www.minutouno.com/sitemap-news.xml
