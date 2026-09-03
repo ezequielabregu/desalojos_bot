@@ -3,7 +3,7 @@ layout: home
 title: Inicio
 ---
 
-Esta web recopila noticias sobre **desalojos en Argentina** para Marina
+Esta web recopila noticias sobre **desalojos en Argentina**.
 
 <p class="status-banner">
   Actualizado: <strong>{{ site.data.status.last_checked_ar }}</strong>
